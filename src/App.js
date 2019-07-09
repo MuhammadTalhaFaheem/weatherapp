@@ -1,25 +1,29 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { createStore,compose,applyMiddleware } from 'redux';
+import { Provider } from "react-redux";
+import thunk from 'redux-thunk';
+import { createLogger } from "redux-logger";
+import allReducers from "./reducers/index";
+import WeatherDataContainer from "./container/WeatherDataContainer";
+
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const logger = createLogger({
+  collapsed: true,
+});
+const store = createStore(allReducers,
+  composeEnhancers(applyMiddleware(thunk, logger))
+  );
+  store.subscribe(() => store.getState())
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <Provider store = {store}>
+        <WeatherDataContainer />
+        </Provider>
       </div>
     );
   }
